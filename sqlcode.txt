@@ -1,0 +1,36 @@
+
+
+/* This script is looking for any customers with that had activity after 01/04/2023 and had more than 7 clicks.  Also, I have all of the metrics that I used below.  Lastly, the metrics that involve durations are scaled to be in DAYS not seconds*/
+
+
+
+SELECT S.user_id, S.session_id, AVG(EXTRACT (EPOCH FROM (H.check_out_time-H.check_in_time))/86400) AS AVG_HOTEL_OCC_DAILY, SUM(F.checked_bags) AS TOTAL_BAGS, ROUND(EXTRACT (EPOCH FROM (F.return_time-F.departure_time))/86400,2) AS VACATION_DAILY_DIFFERENCE, SUM(S.flight_discount_amount) AS TOTAL_FLIGHT_DISCOUNT_AMT, SUM(S.hotel_discount_amount) AS TOTAL_HOTEL_DISCOUNT_AMT, COUNT(S.flight_booked) AS NUM_FLIGHTS_BOOKED, COUNT(S.hotel_booked) AS NUM_HOTELS_BOOKED, ROUND(SUM(S.page_clicks),1) AS TOTAL_CLICKS,  SUM(f.seats)+ SUM(H.rooms) AS NO_CANCEL_NUM, AVG(ROUND(EXTRACT (EPOCH FROM (S.session_end-S.session_start))/60,2)) as AVG_Session_Time, AVG(s.flight_discount_amount+S.hotel_discount_amount)/(COUNT(S.flight_booked)+COUNT(S.hotel_booked)) AS ALL_DISCOUNTS, SUM(f.base_fare_usd) AS ORIGINAL_PAY
+FROM sessions AS S
+LEFT JOIN flights AS F
+ON S.trip_id=F.trip_id
+LEFT JOIN hotels AS H
+ON S.trip_id=H.trip_id
+WHERE (S.session_start > '2023-01-04%') AND (S.page_clicks > 7) 
+GROUP BY S.user_id, S.session_id, f.return_time, f.departure_time
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
